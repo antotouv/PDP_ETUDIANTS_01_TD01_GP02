@@ -6,7 +6,7 @@
 
 #define DHTTYPE DHT11
 
-#define MEASURE_INTERVAL 5
+#define SLEEP_TIME 5
 
 DHT dht(CAPTEUR, DHTTYPE);
 
@@ -19,17 +19,14 @@ void setup() {
 
   dht.begin();
 
-  Serial.println("===Etape 2 : Mesures temperature et humidite + mise en veille ===");
-}
-
-void loop() {
+  Serial.println("=== Etape 3 - Gestion de l'alimentation ===");
 
   float humidity = dht.readHumidity();
 
   float temperature = dht.readTemperature();
 
   if (isnan(humidity) || isnan(temperature)) {
-    Serial.println("Erreur de lecture du capteur DHT11 !");
+    Serial.println("Erreur de lecture du capteur DHT11");
   } else {
     Serial.print("Humidite : ");
     Serial.print(humidity);
@@ -40,8 +37,13 @@ void loop() {
     Serial.println(" °C");
   }
 
-  Serial.println("Mise en veille...\n");
+  Serial.println("Passage en deep sleep...");
+  Serial.println();
 
-  esp_sleep_enable_timer_wakeup(MEASURE_INTERVAL * 1000000ULL);
+  esp_sleep_enable_timer_wakeup(SLEEP_TIME * 1000000ULL);
+
   esp_deep_sleep_start();
+}
+
+void loop() {
 }
